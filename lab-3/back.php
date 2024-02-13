@@ -7,7 +7,10 @@
 </head>
 <body>
     <?php 
-        print_r(get_headers('https://www.php.net/manual/ru/book.sqlite3.php', true));
+        $headers = get_headers('http://127.0.0.1/php-курс/lab-3/index.html');
+        foreach ($headers as $element){
+            echo $element . "<br>";
+        }
     ?>
     <a href="index.html">Переход на 1 страницу</a>
 </body>
