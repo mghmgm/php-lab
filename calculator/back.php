@@ -18,6 +18,9 @@
             border-radius: 10px;
             border: 1px black solid;
         }
+        button:hover {
+            background-color: #52a87c;
+        }
         .calculator {
             margin-inline: auto;
             margin-top: 10px;
@@ -46,7 +49,9 @@
         }
         .calculator__btn--operator {
             background-color: #52a87c;
-;
+        }
+        .calculator__btn--operator:hover {
+            background-color: #a389b8;
         }
         .calculator__btn--last {
             margin-left: 78px;
@@ -64,13 +69,6 @@
             <?php 
                 $value='';
 
-                // сбор данных методом POST 
-                
-                if (isset($_POST['equation'])) {
-                    $value = $_POST['equation'];
-                }
-
-
                 // проверка на число
 
                 function isNumber ($item) {
@@ -80,19 +78,15 @@
                     return false;
                 }
 
-
                 // вычисление примера
                 
                 function calculate ($value) {
-
-                    if ($value=='') {
-                        return '';
-                    }
                     
                     if (isNumber($value)) {
                         return $value;
                     }
                     
+
                     // сложение
 
                     $equation = explode("+", $value);
@@ -105,7 +99,7 @@
                             if (!isNumber($elem)) {
                                 $elem = calculate($elem);  
                             } 
-                            $sum += $elem;
+                            $sum += (int)$elem;
                         }
 
                         return $sum;
@@ -126,7 +120,7 @@
                             if (!isNumber($equation[$i])) {
                                 $equation[$i] = calculate($equation[$i]); 
                             } 
-                            $diff -= $equation[$i];
+                            $diff -= (int)$equation[$i];
                         }
 
                         return $diff;
@@ -134,7 +128,7 @@
 
                     // умножение
 
-                    $equation = explode("x", $value);
+                    $equation = explode("*", $value);
 
                     if (count($equation)>1) {
 
@@ -144,7 +138,7 @@
                             if (!isNumber($elem)) {
                                 $elem = calculate($elem); 
                             } 
-                            $multi *= $elem;
+                            $multi *= (int)$elem;
                         }
 
                         return $multi;
@@ -168,7 +162,7 @@
                             if ($equation[$i]==0) {
                                 return 'На ноль делить нельзя';
                             } else {
-                                $div /= $equation[$i];
+                                $div /= (int)$equation[$i];
                             }
                         }
 
@@ -182,7 +176,9 @@
                 // проверка на скобку
 
                 function bracketsValidator($value) {
+
                     $open = 0;
+
                     for ($i = 0; $i < strlen($value); $i++) {
                         if ($value[$i] == '(') $open++;
                         else {
@@ -192,6 +188,7 @@
                             }
                         }
                     }
+
                     if ($open !== 0) return false;
                     return true;
                 }
@@ -199,38 +196,44 @@
 
                 // вычисление примера со скобками
 
-                function calculateWithBrakets($value) { 
+                function calculateWithBrackets($value) {
+                    
+                    if ($value=='') {
+                        return '';
+                    }
 
-                    if (!bracketsValidator($value)) return 'Ошибочная расстановка скобок';
+                    if (!bracketsValidator($value)) return 'Неправильная расстановка скобок';
+
+                    if ($value[0] == '-') {
+                        $value = '0'.''.$value;
+                    }
 
                     $start = strpos($value, '('); 
 
                     if ($start === false) return calculate($value);
 
-                    $end = $start + 1; 
+                    $end = $start + 1;
                     $open = 1;
 
                     while ($open && $end < strlen($value)) {
                         if ($value[$end] == '(') $open++;
-                        if ($value[$end] == ')') $open--; 
-                        $end++; 
+                        if ($value[$end] == ')') $open--;
+                        $end++;
                     }
 
-                    $new_val = substr($val, 0, $start);
-                    $new_val .= calculateWithBrakets(substr($value, $start + 1, $end - $start - 2));
-                    $new_val .= substr($value, $end);
-
-                    return calculateWithBrakets($new_val);
+                    $newValue = substr($value, 0, $start);
+                    $newValue .= calculateWithBrackets(substr($value, $start + 1, $end - $start - 2));
+                    $newValue .= substr($value, $end);
+                    
+                    return calculateWithBrackets($newValue);
                 }
 
-                if (isset($_POST['equation'])) {
-                    $result = calculateWithBrakets($_POST['equation']);
-                    echo $result;
-                }
-
-
-                calculateWithBrakets($value);
+                // сбор данных методом POST и вывод
                 
+                if (isset($_POST['equation'])) {
+                    $result = calculateWithBrackets($_POST['equation']);
+                    echo $result;
+                };                
             ?>
         </p>
         <div class="calculator__btns">
@@ -241,7 +244,7 @@
             <button class="calculator__btn">7</button>
             <button class="calculator__btn">8</button>
             <button class="calculator__btn">9</button>
-            <button class="calculator__btn calculator__btn--operator">x</button>
+            <button class="calculator__btn calculator__btn--operator">*</button>
             <button class="calculator__btn">4</button>
             <button class="calculator__btn">5</button>
             <button class="calculator__btn">6</button>
