@@ -25,7 +25,7 @@
             margin-inline: auto;
             margin-top: 10px;
             display: flex;
-            width: 320px;
+            width: 380px;
             flex-direction: column;
             border: 1px black solid;
             padding:30px;
@@ -45,7 +45,7 @@
             padding: 12px;
             border-radius: 10px;
             border: 1px solid black;
-            width: 290px;
+            width: 350px;
         }
         .calculator__btn--operator {
             background-color: #52a87c;
@@ -54,7 +54,7 @@
             background-color: #a389b8;
         }
         .calculator__btn--last {
-            margin-left: 78px;
+            margin-left: 156px;
         }
     </style>
     <title>Document</title>
@@ -172,8 +172,34 @@
                     return 'Символы не распознаны';
                 }
                 
-                
-                // проверка на скобку
+
+                // вычисление тригонометрии
+
+                function calculateTrig ($func, $value) {
+                    switch ($func) {
+                        case 'sin' :
+                            return sin(deg2rad($value));
+                            break;
+                        
+                        case 'cos' :
+                            return cos(deg2rad($value));
+                            break;
+                        
+                        case 'tg' :
+                            return tan(deg2rad($value));
+                            break;
+                        
+                        case 'ctg' :
+                            return 1/tan(deg2rad($value));
+                            break;
+
+                        default:
+                            return 'Неизвестная функция';
+                            break;
+                    }
+                }
+
+                // проверка на расстановку скобок
 
                 function bracketsValidator($value) {
 
@@ -183,8 +209,8 @@
                         if ($value[$i] == '(') $open++;
                         else {
                             if ($value[$i] == ')') {
-                            $open--;
-                            if ($open < 0) return false;
+                                $open--;
+                                if ($open < 0) return false;
                             }
                         }
                     }
@@ -193,39 +219,39 @@
                     return true;
                 }
 
-
                 // вычисление примера со скобками
 
                 function calculateWithBrackets($value) {
-                    
                     if ($value=='') {
                         return '';
                     }
 
-                    if (!bracketsValidator($value)) return 'Неправильная расстановка скобок';
-
-                    if ($value[0] == '-') {
-                        $value = '0'.''.$value;
+                    if (preg_match('/(sin|cos|tg|ctg)\([\d.]+\)/', $value)) {
+                        $value = preg_replace_callback('/(sin|cos|tg|ctg)\(([\d.]+)\)/', function($matches) {
+                            $func = $matches[1];
+                            $arg = floatval($matches[2]);
+                            return calculateTrig($func, $arg);
+                        }, $value);
                     }
 
-                    $start = strpos($value, '('); 
+                    if (strpos($value, '(') !== false) {
+                        $start = strpos($value, '(');
+                        $end = $start + 1;
+                        $open = 1;
+                        
+                        while ($open && $end < strlen($value)) {
+                            if ($value[$end] == '(') $open++;
+                            if ($value[$end] == ')') $open--;
+                            $end++;
+                        }
 
-                    if ($start === false) return calculate($value);
+                        $new_value = substr($value, 0, $start);
+                        $new_value .= calculateWithBrackets(substr($value, $start + 1, $end - $start - 2));
+                        $new_value .= substr($value, $end);
 
-                    $end = $start + 1;
-                    $open = 1;
-
-                    while ($open && $end < strlen($value)) {
-                        if ($value[$end] == '(') $open++;
-                        if ($value[$end] == ')') $open--;
-                        $end++;
+                        return calculateWithBrackets($new_value);
                     }
-
-                    $newValue = substr($value, 0, $start);
-                    $newValue .= calculateWithBrackets(substr($value, $start + 1, $end - $start - 2));
-                    $newValue .= substr($value, $end);
-                    
-                    return calculateWithBrackets($newValue);
+                    return calculate($value);
                 }
 
                 // сбор данных методом POST и вывод
@@ -233,22 +259,26 @@
                 if (isset($_POST['equation'])) {
                     $result = calculateWithBrackets($_POST['equation']);
                     echo $result;
-                };                
+                };               
             ?>
         </p>
         <div class="calculator__btns">
+            <button class="calculator__btn calculator__btn--operator">sin</button>
             <button class="calculator__btn calculator__btn--operator">(</button>
             <button class="calculator__btn calculator__btn--operator">)</button>
             <button type="reset" class="calculator__reseter calculator__btn--operator">C</button>
             <button class="calculator__btn calculator__btn--operator">/</button>
+            <button class="calculator__btn calculator__btn--operator">cos</button>
             <button class="calculator__btn">7</button>
             <button class="calculator__btn">8</button>
             <button class="calculator__btn">9</button>
             <button class="calculator__btn calculator__btn--operator">*</button>
+            <button class="calculator__btn calculator__btn--operator">tg</button>
             <button class="calculator__btn">4</button>
             <button class="calculator__btn">5</button>
             <button class="calculator__btn">6</button>
             <button class="calculator__btn calculator__btn--operator">-</button>
+            <button class="calculator__btn calculator__btn--operator">ctg</button>
             <button class="calculator__btn">1</button>
             <button class="calculator__btn">2</button>
             <button class="calculator__btn">3</button>
