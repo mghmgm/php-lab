@@ -33,6 +33,10 @@
         }
         .calculator__result {
             font-size: 20px;
+            margin-bottom: 10px;
+        }
+        .calculator__expression {
+            margin-top: 0px;
         }
         .calculator__btns {
             display: flex;
@@ -99,7 +103,7 @@
                             if (!isNumber($elem)) {
                                 $elem = calculate($elem);  
                             } 
-                            $sum += (int)$elem;
+                            $sum += (float)$elem;
                         }
 
                         return $sum;
@@ -120,7 +124,7 @@
                             if (!isNumber($equation[$i])) {
                                 $equation[$i] = calculate($equation[$i]); 
                             } 
-                            $diff -= (int)$equation[$i];
+                            $diff -= (float)$equation[$i];
                         }
 
                         return $diff;
@@ -138,7 +142,7 @@
                             if (!isNumber($elem)) {
                                 $elem = calculate($elem); 
                             } 
-                            $multi *= (int)$elem;
+                            $multi *= (float)$elem;
                         }
 
                         return $multi;
@@ -162,7 +166,7 @@
                             if ($equation[$i]==0) {
                                 return 'На ноль делить нельзя';
                             } else {
-                                $div /= (int)$equation[$i];
+                                $div /= (float)$equation[$i];
                             }
                         }
 
@@ -259,8 +263,14 @@
                 if (isset($_POST['equation'])) {
                     $result = calculateWithBrackets($_POST['equation']);
                     echo $result;
-                };               
+                };
             ?>
+        </p>
+        <p class="calculator__expression"> 
+        <?php
+            $expression = file_get_contents('expression.txt');
+            echo $expression, " = ", (calculateWithBrackets($expression));
+        ?>
         </p>
         <div class="calculator__btns">
             <button class="calculator__btn calculator__btn--operator">sin</button>
