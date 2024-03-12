@@ -73,24 +73,14 @@
             <?php 
                 $value='';
 
-                // проверка на число
-
-                function isNumber ($item) {
-                    if (is_numeric($item)){
-                        return true;
-                    }
-                    return false;
-                }
-
                 // вычисление примера
                 
                 function calculate ($value) {
                     
-                    if (isNumber($value)) {
+                    if (is_numeric($value)) {
                         return $value;
                     }
                     
-
                     // сложение
 
                     $equation = explode("+", $value);
@@ -100,7 +90,7 @@
                         $sum = 0;
 
                         foreach ($equation as $elem) {
-                            if (!isNumber($elem)) {
+                            if (!is_numeric($elem)) {
                                 $elem = calculate($elem);  
                             } 
                             $sum += (float)$elem;
@@ -114,14 +104,14 @@
                     $equation = explode("-", $value);
 
                     if (count($equation)>1) {
-                        if (!isNumber($equation[0])) {
+                        if (!is_numeric($equation[0])) {
                             $equation[0] = calculate($equation[0]);
                         }
 
                         $diff = $equation[0];
 
                         for ($i=1; $i<count($equation); $i++) {
-                            if (!isNumber($equation[$i])) {
+                            if (!is_numeric($equation[$i])) {
                                 $equation[$i] = calculate($equation[$i]); 
                             } 
                             $diff -= (float)$equation[$i];
@@ -139,7 +129,7 @@
                         $multi = 1;
 
                         foreach ($equation as $elem) {
-                            if (!isNumber($elem)) {
+                            if (!is_numeric($elem)) {
                                 $elem = calculate($elem); 
                             } 
                             $multi *= (float)$elem;
@@ -153,14 +143,14 @@
                     $equation = explode("/", $value);
 
                     if (count($equation)>1) {
-                        if (!isNumber($equation[0])) {
+                        if (!is_numeric($equation[0])) {
                             $equation[0] = calculate($equation[0]);
                         }
 
                         $div = $equation[0];
 
                         for ($i=1; $i<count($equation); $i++) {
-                            if (!isNumber($equation[$i])) {
+                            if (!is_numeric($equation[$i])) {
                                 $equation[$i] = calculate($equation[$i]); 
                             } 
                             if ($equation[$i]==0) {
@@ -175,34 +165,7 @@
                     
                     return 'Символы не распознаны';
                 }
-                
-
-                // вычисление тригонометрии
-
-                function calculateTrig ($func, $value) {
-                    switch ($func) {
-                        case 'sin' :
-                            return sin(deg2rad($value));
-                            break;
-                        
-                        case 'cos' :
-                            return cos(deg2rad($value));
-                            break;
-                        
-                        case 'tg' :
-                            return tan(deg2rad($value));
-                            break;
-                        
-                        case 'ctg' :
-                            return 1/tan(deg2rad($value));
-                            break;
-
-                        default:
-                            return 'Неизвестная функция';
-                            break;
-                    }
-                }
-
+             
                 // проверка на расстановку скобок
 
                 function bracketsValidator($value) {
@@ -234,6 +197,7 @@
                         $value = preg_replace_callback('/(sin|cos|tg|ctg)\(([\d.]+)\)/', function($matches) {
                             $func = $matches[1];
                             $arg = floatval($matches[2]);
+                            require_once('trig.php');
                             return calculateTrig($func, $arg);
                         }, $value);
                     }
