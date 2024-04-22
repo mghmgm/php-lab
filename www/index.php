@@ -29,13 +29,4 @@ $actionName = $controllerAndAction[1];
 $controller = new $controllerName();
 $controller->$actionName(...$matches);
 
-
-// $controller = new \Controllers\MainController();
-
-// if (!empty($_GET['name'])) {
-//     $controller->sayHello($_GET['name']);
-// } else {
-//     $controller->main();
-// }
-
 ?>
