@@ -1,35 +1,18 @@
 <?php
 
-namespace Controllers;
-use View\View;
+namespace src\Controllers;
+use src\View\View;
 
-class MainController
-{
-    private $view;
-
-    public function __construct()
-    {
-        $this->view = new View(__DIR__ . '/../../templates');
+class MainController{
+    public $view;
+    public function __construct(){
+        $this->view = new View('../templates/');
+    }
+    public function main(){
+        $this->view->renderHtml('main/main.php');
     }
 
-    public function main()
-    {
-        $articles = [
-            ['title' => 'Статья 1', 'text' => 'Текст статьи 1'],
-            ['title' => 'Статья 2', 'text' => 'Текст статьи 2'],
-        ];
-
-        $this->view->renderHtml('articles/index.php', ['articles' => $articles]);
+    public function sayHello(string $name){
+        $this->view->renderHtml('main/hello.php', ['name'=>$name]);
     }
-
-    public function sayHello(string $name)
-    {
-        $this->view->renderHtml('main/hello.php', ['name' => $name]);
-    }
-
-    public function sayBye(string $name)
-    {
-        $this->view->renderHtml('main/bye.php', ['name' => $name]);
-    }
-
 }

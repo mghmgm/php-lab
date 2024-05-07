@@ -1,22 +1,16 @@
 <?php
+ namespace src\View;
 
-namespace View;
+ class View{
+    // private $pathTemplate;
+    // public function __construct(string $path){
+    //     $this->pathTemplate = $path;
+    // }
 
-class View
-{
-    private $templatesPath;
-
-    public function __construct(string $templatesPath)
-    {
-        $this->templatesPath = $templatesPath;
+    public function __construct(private $pathTemplate){}
+    public function renderHtml(string $templateName, array $var=[], $code = 200){
+        http_response_code($code);
+        extract($var);
+        include($this->pathTemplate.$templateName);
     }
-
-    public function renderHtml(string $templateName, array $vars = [])
-    {
-        extract($vars);
-        include $this->templatesPath . '/' . $templateName;
-    }
-
-}
-
-?>
+ }

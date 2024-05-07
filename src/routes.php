@@ -1,13 +1,7 @@
 <?php
-
-return [
-
-    '~^hello/(.*)$~' => [\Controllers\MainController::class, 'sayHello'],
-
-    '~^bye/(.*)$~' => [\Controllers\MainController::class, 'sayBye'],
-
-    '~^$~' => [\Controllers\MainController::class, 'main'],
-
-];
-
-?>
+    return [
+        '/(^$)/' =>[\src\Controllers\MainController::class, 'main'],
+        '/hello\/([a-z]+)/' => [\src\Controllers\MainController::class,'sayHello'],
+        '/articles/' => [\src\Controllers\ArticleController::class,'index'],
+        '/article\/(\d+)/' => [\src\Controllers\ArticleController::class,'show']
+    ];

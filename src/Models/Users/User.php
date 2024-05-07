@@ -1,20 +1,20 @@
 <?php
 
-namespace Models\Users;
+namespace src\Models\Users;
 
-class User
-{
-    private $name;
+    class User{
+        private $nickname;
 
-    public function __construct(string $name)
-    {
-        $this->name = $name;
+        public function __set($name, $value){
+            $property = $this->underscoreToCamelcase($name);
+            $this->$property = $value;
+        }
+
+        private function underscoreToCamelcase($name){
+            return lcfirst(str_replace('_', '', ucwords($name, '_')));
+        }
+
+        public function getNickname(){
+            return $this->nickname;
+        }
     }
-
-    public function getName(): string
-    {
-        return $this->name;
-    }
-}
-
-?>
