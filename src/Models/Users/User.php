@@ -1,20 +1,23 @@
 <?php
 
 namespace src\Models\Users;
+use src\Models\ActiveRecordEntity;
 
-    class User{
-        private $nickname;
-
-        public function __set($name, $value){
-            $property = $this->underscoreToCamelcase($name);
-            $this->$property = $value;
-        }
-
-        private function underscoreToCamelcase($name){
-            return lcfirst(str_replace('_', '', ucwords($name, '_')));
-        }
+    class User extends ActiveRecordEntity {
+        protected $nickname;
+        protected $email;
+        protected $isConfirmed;
+        protected $role;
+        protected $passwordHash;
+        protected $authToken;
+        protected $createdAt;
 
         public function getNickname(){
             return $this->nickname;
+        }
+
+        protected static function getTableName(): string
+        {
+            return 'users';
         }
     }
