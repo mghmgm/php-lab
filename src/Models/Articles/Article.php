@@ -21,6 +21,16 @@ use src\Models\ActiveRecordEntity;
             return User::getById($this->authorId);
         }
 
+        public function setName(string $name){
+            $this->name = $name;
+        }
+        public function setText(string $text){
+            $this->text = $text;
+        }
+        public function setAuthorId(int $authorId){
+            $this->authorId = $authorId;
+        }
+
         protected static function getTableName(): string
         {
             return 'articles';

@@ -21,13 +21,6 @@ class ArticleController{
     public function show(int $id){
         $article = Article::getById($id);
 
-        $reflector = new \ReflectionObject($article);
-        $properties = $reflector->getProperties();
-        $propertiesNames = [];
-        foreach ($properties as $property) {
-            $propertiesNames[] = $property->getName();
-        }
-
         if ($article == []){
             $this->view->renderHtml('errors/404.php',[],404);
             return;
@@ -35,4 +28,38 @@ class ArticleController{
 
         $this->view->renderHtml('articles/show.php', ['article'=>$article]);
     }
+
+    public function create(){
+        $this->view->renderHtml('articles/create.php');
+    }
+
+    public function edit(int $id){
+        $article = Article::getById($id);
+        $this->view->renderHtml('articles/update.php', ['article'=>$article]);
+    }
+
+    public function store(){
+        $article = new Article;
+        $article->setName($_POST['title']);
+        $article->setText($_POST['text']);
+        $article->setAuthorId($_POST['authorId']);
+        $article->save();
+        header('Location:/php-курс/www/articles');
+    }
+
+    public function update(int $id){
+        $article = Article::getById($id);
+        $article->setName($_POST['title']);
+        $article->setText($_POST['text']);
+        $article->setAuthorId($_POST['authorId']);
+        $article->save();
+        header('Location:/php-курс/www/article/'.$article->getId());
+    }
+
+    public function delete(int $id){
+        $article = Article::getById($id);
+        $article->delete();
+        header('Location:/php-курс/www/articles');
+    }
+
 }
