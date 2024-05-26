@@ -6,7 +6,7 @@ use Services\Db;
 abstract class ActiveRecordEntity {
     protected $id;
 
-    public function getId(): int
+    public function getId(): ?int
     {
         return $this->id;
     }
@@ -46,10 +46,10 @@ abstract class ActiveRecordEntity {
         }
         return $nameAndValue;
     }
-    
+
     public function save(){
         $data = $this->getPropertyToDb();
-        if($this->getId() === null) $this->insert($data);
+        if($this->getId() === NULL) $this->insert($data);
         else $this->update($data);
     }
 
@@ -97,6 +97,13 @@ abstract class ActiveRecordEntity {
         $db = Db::getInstance();
         $sql = 'SELECT * FROM `'.static::getTableName().'`';  
         return $db->query($sql, [], static::class);
+    }
+
+    public static function findAllByFk($foreignKey, $value): array
+    {
+        $db = Db::getInstance();
+        $sql = 'SELECT * FROM `' . static::getTableName() . '` WHERE `' . $foreignKey . '` = :value';
+        return $db->query($sql, ['value' => $value], static::class);
     }
 
     abstract protected static function getTableName(): string;
