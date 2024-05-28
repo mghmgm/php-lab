@@ -65,6 +65,12 @@ class ArticleController{
     public function delete(int $id){
         $article = Article::getById($id);
         $article->delete();
+
+        $comments = Comment::findAllByFk('article_id', $id);
+        foreach ($comments as $comment){
+            $comment->delete();
+        }
+
         header('Location:/php-курс/www/articles');
     }
 
@@ -98,4 +104,5 @@ class ArticleController{
 
         header('Location:/php-курс/www/article/'.$articleId);
     }
+
 }
